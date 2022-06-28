@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="PracticalExam:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>PracticalExam</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="PracticalExam-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="PracticalExam:war exploded" />
+    </root>
+  </artifact>
+</component>

@@ -16,13 +16,12 @@ public class ServletUpdateAccount extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
         String username = request.getParameter("username");
         if (username == null) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/admin");
-            requestDispatcher.forward(request, response);
+            //Redirect to admin page
+            String url = request.getContextPath() + "/";
+            response.sendRedirect(url);
         }
-
 
         User user = UserDAO.getUser(username);
         request.setAttribute("action", "Update");
@@ -33,35 +32,45 @@ public class ServletUpdateAccount extends HttpServlet {
         request.setAttribute("action", "Update");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/views/account/add.jsp");
         requestDispatcher.forward(request, response);
-
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        String action = request.getParameter("action");
+        User currentUser = (User) request.getSession().getAttribute("user");
         String username = request.getParameter("username");
+        String action = request.getParameter("action");
         String password = request.getParameter("password");
         String fullname = request.getParameter("fullname");
-        boolean admin = Boolean.parseBoolean(request.getParameter("admin"));
-        boolean status = Boolean.parseBoolean(request.getParameter("status"));
-
-        System.out.println("action: " + action + " username: " + username + " password: " + password + " fullname: " + fullname + " admin: " + admin + " status: " + status);
-
         if (action.equals("Update")) {
-            User user = new User(username, password, fullname, admin, status);
-            UserDAO.updateUser(username, user);
+            if (currentUser.getAdmin()) {
+                String[] role = request.getParameterValues("admin");
+                boolean admin = role != null;
+                String[] statuses = request.getParameterValues("status");
+                boolean status = statuses != null;
 
+                //Check if user update his own account
+                if(username.equals(currentUser.getUsername())) { //If true, return to admin page
+                    String url = request.getContextPath() + "/admin";
+                    response.sendRedirect(url);
+                } else {
+                    User user = new User(username, password, fullname, status, admin);
+                    UserDAO.updateUser(username, user);
+                    String url = request.getContextPath() + "/admin";
+                    response.sendRedirect(url);
+                }
+            } else {
+                User user = UserDAO.getUser(username);
+                user.setFullname(fullname);
+                user.setPassword(password);
+                UserDAO.updateUser(username, user);
+                //Redirect to user page
+                String url = request.getContextPath() + "/user";
+                response.sendRedirect(url);
+            }
         }
-        User user = (User) request.getSession().getAttribute("user");        //If user session is admin then redirect to admin page
-        if  (user.getAdmin()) {
-            response.sendRedirect("/admin");
-        } else {
-            response.sendRedirect("/user");
-        }
-        return;
     }
 }

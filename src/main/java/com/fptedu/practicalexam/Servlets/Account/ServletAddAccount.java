@@ -30,13 +30,21 @@ public class ServletAddAccount extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String fullname = request.getParameter("fullname");
-        boolean admin = Boolean.parseBoolean(request.getParameter("admin"));
-        boolean status = Boolean.parseBoolean(request.getParameter("status"));
+        String[] role = request.getParameterValues("admin");
+        boolean admin = role != null;
 
-        User user = new User(username, password, fullname, admin, status);
+        String[] statuses = request.getParameterValues("status");
+        boolean status = statuses != null;
+
+        User user = new User(username, password, fullname, status, admin);
         //Check if username is exist
         if (UserDAO.getUser(username).getUsername() != null) {
             request.setAttribute("error", "Username is exist");
+            request.setAttribute("action", "Add");
+            request.setAttribute("username", username);
+            request.setAttribute("fullname", fullname);
+            request.setAttribute("admin", admin);
+            request.setAttribute("status", status);
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/views/account/add.jsp");
             requestDispatcher.forward(request, response);
         } else {

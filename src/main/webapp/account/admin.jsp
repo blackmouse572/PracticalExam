@@ -125,7 +125,7 @@
 
                 <div class="w-100 d-flex justify-content-end align-items-center">
                     <a href="${pageContext.request.contextPath}/admin/account/add" class="btn btn-success">Add
-                        product</a>
+                        user</a>
                 </div>
             </div>
         </div>

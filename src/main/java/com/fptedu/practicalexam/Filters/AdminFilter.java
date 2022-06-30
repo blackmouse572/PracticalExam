@@ -11,7 +11,9 @@ import java.io.IOException;
 
 @WebFilter(filterName = "AccountFilter", urlPatterns = {"/admin", "/admin/*"})
 public class AdminFilter implements Filter {
-    public void init(FilterConfig config) throws ServletException {
+    public void init(FilterConfig config) {
+
+
     }
 
     public void destroy() {
@@ -19,34 +21,46 @@ public class AdminFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-        //Check if user login or not
+        //Check if sessionUser login or not
 
         HttpSession session = ((HttpServletRequest) request).getSession();
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
+        User sessionUser = (User) session.getAttribute("user");
+
+        if (sessionUser == null) {
             String errorUrl = ((HttpServletRequest) request).getContextPath() + "/";
             ((HttpServletResponse) response).sendRedirect(errorUrl);
-        } else if (!user.getAdmin()) { //If user is not admin
+        } else if (!sessionUser.getAdmin()) { //If sessionUser is not admin
             System.out.println("User is not admin");
 
-            if (((HttpServletRequest) request).getRequestURI().contains("/admin/account/edit")) { //Check if user is trying to access add account page
-                System.out.println("Tick ✅");
-                String username = ((HttpServletRequest) request).getParameter("username");
-                if (username.equals(user.getUsername())) { //Check if user is trying to edit himself
+            if (((HttpServletRequest) request).getRequestURI().contains("/admin/account/edit")) { //Check if sessionUser is trying to access add account page
+                System.out.println("User is trying to access edit account page");
+                String username = request.getParameter("username");
+                if (username.equals(sessionUser.getUsername())) { //Check if sessionUser is trying to edit himself
                     chain.doFilter(request, response);
                 } else {
                     String errorUrl = ((HttpServletRequest) request).getContextPath() + "/user";
                     ((HttpServletResponse) response).sendRedirect(errorUrl);
+                    return;
                 }
             }
-            //process if url /admin/logout even user is not admin
-            else if (((HttpServletRequest) request).getRequestURI().contains("/admin/logout")) {
+            if (((HttpServletRequest) request).getRequestURI().contains("/admin/account/delete")) { //Check if sessionUser is trying to access delete account page
+                System.out.println("User is trying to access delete account page");
+                String username = request.getParameter("username");
+                if (username.equals(sessionUser.getUsername())) { //Check if sessionUser is trying to delete himself
+                    System.out.println("User is trying to delete himself");
+                    chain.doFilter(request, response);
+                } else {
+                    System.out.println("User is trying to delete other user");
+                    String errorUrl = ((HttpServletRequest) request).getContextPath() + "/user";
+                    ((HttpServletResponse) response).sendRedirect(errorUrl);
+                }
+            }
+            //process if url /admin/logout even sessionUser is not admin
+            if (((HttpServletRequest) request).getRequestURI().contains("/admin/logout")) {
                 chain.doFilter(request, response);
-            } else {
-                String errorUrl = ((HttpServletRequest) request).getContextPath() + "/user";
-                ((HttpServletResponse) response).sendRedirect(errorUrl);
             }
         } else {
+            //R
             chain.doFilter(request, response);
         }
     }

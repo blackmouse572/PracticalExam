@@ -5,9 +5,12 @@ import com.fptedu.practicalexam.Models.User;
 import com.fptedu.practicalexam.Utils.ProductDAO;
 import com.fptedu.practicalexam.Utils.UserDAO;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -21,9 +24,19 @@ public class ServletUser extends HttpServlet {
 
         String url = request.getContextPath() + "/account/user.jsp";
 
-        //Get all users
-        ArrayList<User> users = UserDAO.getAllUsers();
-        request.setAttribute("users", users);
+        User user = (User) request.getSession().getAttribute("user");
+
+        //Update session user if changed
+        User user_update = UserDAO.getUser(user.getUsername());
+
+        if (user_update != user) {
+            System.out.println("Current user changed information");
+            request.getSession().setAttribute("user", user_update);
+            request.setAttribute("user", user_update);
+        } else {
+            request.setAttribute("user", user);
+        }
+
         //Get all products
         ArrayList<Product> products = ProductDAO.getAllProduct();
         request.setAttribute("products", products);

@@ -35,32 +35,31 @@ public class HomeServlet extends HttpServlet {
 
             String homeUrl = request.getContextPath() + "/views/home.jsp";
             request.getRequestDispatcher(homeUrl).forward(request, response);
-        }
-        else if  (user.getUsername().equals(username) && user.getPassword().equals(password) ) {
+        } else if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
             HttpSession session = request.getSession();
-            if(!user.getStatus()) {
+            if (!user.getStatus()) {
                 request.setAttribute("error", "Your account is not active");
                 String homeUrl = request.getContextPath() + "/views/home.jsp";
                 request.getRequestDispatcher(homeUrl).forward(request, response);
-            }
-            session.setAttribute("user", user);
-            System.out.println("User: " + user.getUsername() + " logged in at " + new java.util.Date());
-            System.out.println("Session ID: " + session.getId());
-
-            if (remember != null) {
-                session.setMaxInactiveInterval(60 * 60 * 24 * 7);
-            }
-            else {
-                session.setMaxInactiveInterval(60 * 60 * 24);
-            }
-            System.out.println("Session timeout: " + session.getMaxInactiveInterval()+ "(sec) with account"+session.getAttribute("user"));
-
-            if (user.getAdmin()) {
-               String adminUrl = request.getContextPath() + "/admin";
-                response.sendRedirect(adminUrl);
             } else {
-                String userUrl = request.getContextPath() + "/user";
-                response.sendRedirect(userUrl);
+                session.setAttribute("user", user);
+                System.out.println("User: " + user.getUsername() + " logged in at " + new java.util.Date());
+                System.out.println("Session ID: " + session.getId());
+
+                if (remember != null) {
+                    session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+                } else {
+                    session.setMaxInactiveInterval(60 * 60 * 24);
+                }
+                System.out.println("Session timeout: " + session.getMaxInactiveInterval() + "(sec) with account" + session.getAttribute("user"));
+
+                if (user.getAdmin()) {
+                    String adminUrl = request.getContextPath() + "/admin";
+                    response.sendRedirect(adminUrl);
+                } else {
+                    String userUrl = request.getContextPath() + "/user";
+                    response.sendRedirect(userUrl);
+                }
             }
         }
     }

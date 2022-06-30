@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <!doctype html>
 <html lang="en">
 <head>
@@ -58,56 +58,25 @@
             <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tabs" tabindex="0">
                 <h2 class="p-2 bg-black text-light fw-bold text-center">Users</h2>
 
-                <table class="table table-striped table-responsive">
-                    <thead class="">
-                    <tr>
-                        <th scope="col">Username</th>
-                        <th scope="col">Password</th>
-                        <th scope="col">Full Name</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Admin</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <%--Display current user info--%>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               value="${requestScope.user.username}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               value="${requestScope.user.password}" readonly>
+                    </div>
 
-                    <c:forEach var="user" items="${requestScope.users}">
-                        <c:if test="${sessionScope.user.username != user.username}">
-                            <tr>
-                                <th scope="row">${user.username}</th>
-                                <td>${user.password}</td>
-                                <td>${user.fullname}</td>
-                                <td>${user.status}</td>
-                                <td>${user.admin}</td>
-                                <td class="align-middle">
-                                    <button disabled
-                                            class="btn btn-dark">Edit
-                                    </button>
+                    <div class="mb-3">
+                        <label for="fullname" class="form-label">Full name</label>
+                        <input type="text" class="form-control" id="fullname" name="fullname"
+                               value="${requestScope.user.fullname}" readonly>
+                    </div>
+                <a href="${pageContext.request.contextPath}/admin/account/edit?username=${requestScope.user.username}" class="btn btn-primary">Edit</a>
 
-                                </td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${sessionScope.user.username == user.username}">
-                            <tr>
-                                <th scope="row">${user.username}</th>
-                                <td>${user.password}</td>
-                                <td>${user.fullname}</td>
-                                <td>${user.status}</td>
-                                <td>${user.admin}</td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/admin/account/edit?username=${user.username}"
-                                       class="btn btn-primary">Edit</a>
-                                </td>
-                            </tr>
-                        </c:if>
-                    </c:forEach>
-                    </tbody>
-                </table>
-
-                <div class="w-100 d-flex justify-content-end align-items-center">
-                    <a href="${pageContext.request.contextPath}/admin/account/add" class="btn btn-success">Add
-                        product</a>
-                </div>
             </div>
         </div>
     </div>

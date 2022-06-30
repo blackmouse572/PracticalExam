@@ -21,18 +21,16 @@ public class UserFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-       //Check if user logined
+       //Check if user logged in
         HttpSession session = ((HttpServletRequest) request).getSession();
         User user = (User) session.getAttribute("user");
 
         if (user == null) {
             String errorUrl = ((HttpServletRequest) request).getContextPath() + "/";
             ((HttpServletResponse) response).sendRedirect(errorUrl);
-            return;
         } else if (user.getAdmin()) {
             String errorUrl = ((HttpServletRequest) request).getContextPath() + "/admin";
             ((HttpServletResponse) response).sendRedirect(errorUrl);
-            return;
         } else {
             chain.doFilter(request, response);
         }

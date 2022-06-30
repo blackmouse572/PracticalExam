@@ -40,22 +40,20 @@
                     <input required type="password" class="form-control" id="password" name="password" placeholder="">
                 </div>
                 <c:if test="${sessionScope.user.admin}">
-
-
                     <div class="mb-3 form-check">
-                        <input class="form-check-input" type="checkbox" value="${requestScope.admin}" id="isAdmin"
-                               name="admin">
-                        <label class="form-check-label" for="isAdmin">
+                        <label class="form-check-label" for="admin">
                             Admin
                         </label>
+                        <input class="form-check-input" type="checkbox" value="${requestScope.admin}" id="admin"
+                               name="admin">
                     </div>
                 </c:if>
                 <div class="mb-3 form-check">
-                    <label class="form-check-label" for="Status">
+                    <label class="form-check-label" for="status">
                         Status
                     </label>
-                    <input checked class="form-check-input" type="checkbox" value="${requestScope.status}" id="Status"
-                           name="admin">
+                    <input checked class="form-check-input" type="checkbox" value="${requestScope.status}" id="status"
+                           name="status">
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                     <button name="action" value="${requestScope.action}" type="submit"
